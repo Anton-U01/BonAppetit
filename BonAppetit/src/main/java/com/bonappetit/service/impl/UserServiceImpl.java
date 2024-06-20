@@ -1,8 +1,10 @@
 package com.bonappetit.service.impl;
 
 import com.bonappetit.model.entity.User;
+import com.bonappetit.model.entity.dto.UserLoginDto;
 import com.bonappetit.model.entity.dto.UserRegisterDto;
 import com.bonappetit.repo.UserRepository;
+import com.bonappetit.service.CurrentUser;
 import com.bonappetit.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +17,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentUser currentUser;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, CurrentUser currentUser) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.currentUser = currentUser;
     }
 
     @Override
@@ -37,5 +41,26 @@ public class UserServiceImpl implements UserService {
         userRepository.saveAndFlush(user);
 
         return true;
+    }
+
+    @Override
+    public boolean login(UserLoginDto userLoginDto) {
+        Optional<User> optionalUser = userRepository.findByUsername(userLoginDto.getUsername());
+        if(optionalUser.isEmpty()){
+            return false;
+        }
+        User user = optionalUser.get();
+        if(!passwordEncoder.matches(userLoginDto.getPassword(),user.getPassword())){
+            return false;
+        }
+
+        currentUser.login(user);
+
+        return true;
+    }
+
+    @Override
+    public void logout() {
+        currentUser.logout();
     }
 }
