@@ -1,5 +1,6 @@
 package com.bonappetit.controller;
 
+import com.bonappetit.model.entity.dto.UserLoginDto;
 import com.bonappetit.model.entity.dto.UserRegisterDto;
 import com.bonappetit.service.UserService;
 import jakarta.validation.Valid;
@@ -41,8 +42,40 @@ public class UserController {
         }
         return "redirect:/login";
     }
+
+    @ModelAttribute("userLogin")
+    public UserLoginDto createUserLogin(){
+        return new UserLoginDto();
+    }
     @GetMapping("/login")
     public String viewLogin(){
         return "login";
+    }
+    @PostMapping("/login")
+    public String login(@Valid UserLoginDto userLoginDto,
+                        BindingResult bindingResult,
+                        RedirectAttributes redirectAttributes){
+        if(bindingResult.hasErrors()){
+            redirectAttributes.addFlashAttribute("userLogin",userLoginDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userLogin",bindingResult);
+
+            return "redirect:/login";
+        }
+
+        boolean success = userService.login(userLoginDto);
+        if(!success){
+            redirectAttributes.addFlashAttribute("userLogin",userLoginDto);
+            redirectAttributes.addFlashAttribute("incorrectInput",true);
+
+            return "redirect:/login";
+        }
+
+        return "redirect:/home";
+    }
+
+    @PostMapping("/logout")
+    public String logout(){
+        userService.logout();
+        return "redirect:/index";
     }
 }
