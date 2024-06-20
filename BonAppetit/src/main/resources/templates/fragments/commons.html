@@ -12,21 +12,23 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-lg bg-nav rounded">
-        <a class="nav-link text-primary active h5 text-stroke" href="/">Bon App-étit</a>
-        <a class="nav-link text-primary active h5 text-stroke" href="/">Add Recipe</a>
+        <a th:if="${@currentUser.isLoggedIn()}" class="nav-link text-primary active h5 text-stroke" th:href="@{/home}">Bon App-étit</a>
+        <a th:if="${@currentUser.isLoggedIn()}" class="nav-link text-primary active h5 text-stroke" th:href="@{/recipe-add}">Add Recipe</a>
 
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
             <ul class="navbar-nav row">
                 <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" href="/">Login</a>
+                    <a th:unless="${@currentUser.isLoggedIn()}" class="nav-link text-primary active h5 text-stroke" th:href="@{/login}">Login</a>
                 </li>
 
                 <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" href="/">Register</a>
+                    <a th:unless="${@currentUser.isLoggedIn()}" class="nav-link text-primary active h5 text-stroke" th:href="@{/register}">Register</a>
                 </li>
 
-                <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" href="/">Logout</a>
+                <li th:if="${@currentUser.isLoggedIn()}" class="nav-item col-md-4">
+                    <form th:action="@{/logout}" th:method="POST">
+                    <button type="submit" class="nav-link text-primary active h5 text-stroke">Logout</button>
+                    </form>
                 </li>
             </ul>
         </div>

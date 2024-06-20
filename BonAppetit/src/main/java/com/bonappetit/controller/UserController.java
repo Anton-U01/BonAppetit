@@ -76,6 +76,6 @@ public class UserController {
     @PostMapping("/logout")
     public String logout(){
         userService.logout();
-        return "redirect:/index";
+        return "redirect:/";
     }
 }
