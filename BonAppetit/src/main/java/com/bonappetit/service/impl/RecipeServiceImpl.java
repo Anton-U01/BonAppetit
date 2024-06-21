@@ -12,7 +12,9 @@ import com.bonappetit.service.CurrentUser;
 import com.bonappetit.service.RecipeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,4 +51,26 @@ public class RecipeServiceImpl implements RecipeService {
 
         return true;
     }
+
+    @Override
+    public List<Recipe> findAllRecipesByCategoryName(CategoryEnum categoryEnum) {
+        Optional<Category> category = categoryRepository.findByCategoryName(categoryEnum);
+        return recipeRepository.findAllByCategory(category.get());
+    }
+
+    @Override
+    public void setRecipeAsFavourite(Long id,String username) {
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if(recipe.isEmpty()){
+            return;
+        }
+        Optional<User> optionalUser = userRepository.findByUsername(currentUser.getUsername());
+        if(optionalUser.isEmpty()){
+            return;
+        }
+        optionalUser.get().addRecipeToFavourites(recipe.get());
+        userRepository.save(optionalUser.get());
+    }
+
+
 }

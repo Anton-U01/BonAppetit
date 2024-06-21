@@ -16,7 +16,7 @@ public class User extends BaseEntity{
     private String email;
     @OneToMany(mappedBy = "addedBy")
     private List<Recipe> addedRecipes;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Recipe> favouriteRecipes;
 
     public User() {
@@ -62,5 +62,9 @@ public class User extends BaseEntity{
 
     public void setFavouriteRecipes(List<Recipe> favouriteRecipes) {
         this.favouriteRecipes = favouriteRecipes;
+    }
+
+    public void addRecipeToFavourites(Recipe recipe) {
+        this.favouriteRecipes.add(recipe);
     }
 }
