@@ -1,5 +1,6 @@
 package com.bonappetit.service.impl;
 
+import com.bonappetit.model.entity.Recipe;
 import com.bonappetit.model.entity.User;
 import com.bonappetit.model.entity.dto.UserLoginDto;
 import com.bonappetit.model.entity.dto.UserRegisterDto;
@@ -9,7 +10,9 @@ import com.bonappetit.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -62,5 +65,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout() {
         currentUser.logout();
+    }
+
+    @Override
+    public List<Recipe> getUsersFavouritesRecipes(String username) {
+        return userRepository.findByUsername(username).get().getFavouriteRecipes();
     }
 }
