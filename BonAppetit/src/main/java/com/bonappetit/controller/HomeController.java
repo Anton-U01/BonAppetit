@@ -2,6 +2,7 @@ package com.bonappetit.controller;
 
 import com.bonappetit.model.entity.CategoryEnum;
 import com.bonappetit.model.entity.Recipe;
+import com.bonappetit.model.entity.dto.RecipeDto;
 import com.bonappetit.repo.UserRepository;
 import com.bonappetit.service.CurrentUser;
 import com.bonappetit.service.RecipeService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -35,6 +37,7 @@ public class HomeController {
     }
 
     @GetMapping("/home")
+    @Transactional
     public String loggedIndex(Model model){
         if(!currentUser.isLoggedIn()){
             return "redirect:/";
@@ -43,7 +46,10 @@ public class HomeController {
        List<Recipe> cocktailRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.COCKTAIL);
        List<Recipe> mainDishRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.MAIN_DISH);
        List<Recipe> dessertRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.DESSERT);
-       List<Recipe> favouritesRecipes = userService.getUsersFavouritesRecipes(currentUser.getUsername());
+       List<RecipeDto> favouritesRecipes = userService.getUsersFavouritesRecipes(currentUser.getUsername())
+               .stream()
+               .map(RecipeDto::new)
+               .collect(Collectors.toList());
        model.addAttribute("cocktails",cocktailRecipes);
        model.addAttribute("mainDishes",mainDishRecipes);
        model.addAttribute("desserts",dessertRecipes);
