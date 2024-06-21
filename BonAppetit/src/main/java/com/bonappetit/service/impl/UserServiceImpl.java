@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<Recipe> getUsersFavouritesRecipes(String username) {
         return userRepository.findByUsername(username).get().getFavouriteRecipes();
     }

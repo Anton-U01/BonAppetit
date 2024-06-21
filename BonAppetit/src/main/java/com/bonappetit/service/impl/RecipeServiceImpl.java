@@ -59,6 +59,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
     public void setRecipeAsFavourite(Long id,String username) {
         Optional<Recipe> recipe = recipeRepository.findById(id);
         if(recipe.isEmpty()){
