@@ -28,12 +28,18 @@ public class HomeController {
 
     @GetMapping("/")
     public String notLoggedIndex(){
-
+        if(currentUser.isLoggedIn()){
+            return "redirect:/home";
+        }
         return "index";
     }
 
     @GetMapping("/home")
     public String loggedIndex(Model model){
+        if(!currentUser.isLoggedIn()){
+            return "redirect:/";
+        }
+
        List<Recipe> cocktailRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.COCKTAIL);
        List<Recipe> mainDishRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.MAIN_DISH);
        List<Recipe> dessertRecipes = recipeService.findAllRecipesByCategoryName(CategoryEnum.DESSERT);
