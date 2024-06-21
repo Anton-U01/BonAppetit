@@ -28,12 +28,19 @@ public class RecipeController {
     }
     @GetMapping("/recipe-add")
     public String viewAddRecipe(){
+        if(!currentUser.isLoggedIn()){
+            return "redirect:/";
+        }
         return "recipe-add";
     }
     @PostMapping("/recipe-add")
     public String addNewRecipe(@Valid AddRecipeDto addRecipeDto,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes){
+        if(!currentUser.isLoggedIn()){
+            return "redirect:/";
+        }
+
             if(bindingResult.hasErrors() || !recipeService.addNewRecipe(addRecipeDto)){
                 redirectAttributes.addFlashAttribute("addRecipe",addRecipeDto);
                 redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.addRecipe",bindingResult);
@@ -44,6 +51,10 @@ public class RecipeController {
     }
     @PostMapping("/add-to-favourites/{id}")
     public String addToFavourites(@PathVariable Long id){
+        if(!currentUser.isLoggedIn()){
+            return "redirect:/";
+        }
+
         recipeService.setRecipeAsFavourite(id,currentUser.getUsername());
 
         return "redirect:/home";
